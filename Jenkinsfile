@@ -1,12 +1,6 @@
 pipeline {
   agent any
   stages {
-
-    stage('Clone down'){
-    steps{
-      stash excludes: '/.git/', name: 'code'
-    }
-    }
     stage('Parallel execution') {
       parallel {
         stage('Build') {
@@ -16,13 +10,14 @@ pipeline {
         }
 
         stage('Build app') {
+          options {
+            skipDefaultCheckout true
+                  }
           agent {
             docker {
               image 'gradle:jdk11'
             }
-          options {
-              skipDefaultCheckout(true)
-            }
+
           }
           steps {
             unstash 'code'
@@ -31,6 +26,28 @@ pipeline {
             sh 'ls'
             deleteDir()
             sh 'ls'
+
+          }
+        }
+        stage('test app') {
+          options {
+            skipDefaultCheckout true
+                  }
+          agent {
+            docker {
+              image 'gradle:jdk11'
+            }
+
+          }
+          steps {
+            unstash 'code'
+            sh 'ci/unit-test-app.sh'
+            junit 'app/build/test-results/test/TEST-*.xml'
+          }
+        }
+        stage('clone down') {
+          steps {
+            stash excludes: '/.git/', name: 'code'
           }
         }
 
@@ -38,4 +55,9 @@ pipeline {
     }
 
   }
+  post {
+    always {
+      deleteDir() /* clean up our workspace */
+          }
+        }
 }
