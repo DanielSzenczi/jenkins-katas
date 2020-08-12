@@ -76,7 +76,9 @@ pipeline {
 
         }
         stage('Component test') {
-         when { branch "master" }
+         when {
+          not {
+         branch "dev/*" } }
          steps {
            unstash 'build' //unstash the repository code
            sh 'ci/component-test.sh'
