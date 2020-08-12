@@ -1,7 +1,7 @@
 pipeline {
   agent any
   environment {
-      docker_username = alpaca69
+      docker_username = 'alpaca69'
   }
   stages {
     stage('Parallel execution') {
@@ -33,9 +33,10 @@ pipeline {
             sh 'ci/build-app.sh'
             archiveArtifacts 'app/build/libs/'
             sh 'ls'
+            stash 'code'
             deleteDir()
             sh 'ls'
-            stash 'code'
+
 
           }
         }
