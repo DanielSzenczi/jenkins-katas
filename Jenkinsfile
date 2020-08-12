@@ -6,6 +6,12 @@ pipeline {
   stages {
     stage('Parallel execution') {
       parallel {
+
+      stage('clone down') {
+        steps {
+          stash excludes: '/.git/', name: 'code'
+        }
+      }
         stage('Build') {
           steps {
             sh 'echo "hello world"'
@@ -49,11 +55,7 @@ pipeline {
             junit 'app/build/test-results/test/TEST-*.xml'
           }
         }
-        stage('clone down') {
-          steps {
-            stash excludes: '/.git/', name: 'code'
-          }
-        }
+
 
          stage('push docker app') {
           environment {
