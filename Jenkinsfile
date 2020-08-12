@@ -3,7 +3,9 @@ pipeline {
   stages {
 
     stage('Clone down'){
-    stash excludes: '/.git/', name: 'code'
+    steps{
+      stash excludes: '/.git/', name: 'code'
+    }
     }
     stage('Parallel execution') {
       parallel {
@@ -18,8 +20,9 @@ pipeline {
             docker {
               image 'gradle:jdk11'
             }
-            skipDefualtCheckout(true)
-
+          options {
+              skipDefaultCheckout(true)
+            }
           }
           steps {
             unstash 'code'
