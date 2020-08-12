@@ -75,6 +75,13 @@ pipeline {
 }
 
         }
+        stage('Component test') {
+         when { branch "master" }
+         steps {
+           unstash 'build' //unstash the repository code
+           sh 'ci/component-test.sh'
+         }
+       }
 
 
     }
