@@ -4,14 +4,17 @@ pipeline {
       docker_username = 'alpaca69'
   }
   stages {
+
+  stage('clone down') {
+    steps {
+      stash excludes: '/.git/', name: 'code'
+    }
+  }
+
     stage('Parallel execution') {
       parallel {
 
-      stage('clone down') {
-        steps {
-          stash excludes: '/.git/', name: 'code'
-        }
-      }
+
         stage('Build') {
           steps {
             sh 'echo "hello world"'
@@ -76,8 +79,3 @@ pipeline {
     }
 
   }
-  post {
-    always {
-      deleteDir() /* clean up our workspace */
-          }
-        }
